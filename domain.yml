@@ -65,3 +65,8 @@ responses:
     - text: "Based on what you've told me, I recommend the {product}. It has great reviews and good value for money."
     - text: "You might like the {product}. Do you want to see more details or alternatives?"
 
+
+actions:
+  - action_hello_world
+  - action_call_llm
+
