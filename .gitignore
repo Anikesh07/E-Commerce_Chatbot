@@ -1,3 +1,43 @@
 .venv/
-.models/
+venv/
+env/
+.env
+.venv/
+
+# Rasa model artifacts and cache
+models/
+.rasa/
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs and runtime files
+.log
+logs/
+
+# Credentials and secrets
+credentials.yml
+secrets.yml
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# compiled extensions
+*.so

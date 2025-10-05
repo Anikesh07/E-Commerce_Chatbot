@@ -62,3 +62,34 @@ Common fixes:
 - Configure `endpoints.yml` for production (tracker store, remote action server).
 
 If you want, I can run `rasa train` now and do a quick smoke test, or implement a simple dynamic recommendation action. Tell me which you'd prefer.
+
+## LLM integration (optional)
+This project contains an example custom action (`action_call_llm`) that demonstrates how to call an external LLM (OpenAI-style). To enable it:
+
+- Install the OpenAI client in the environment where actions run:
+```powershell
+pip install openai
+```
+- Set your API key on the action server machine (do NOT commit this to source):
+```powershell
+$env:OPENAI_API_KEY = 'sk-...'
+```
+- Optional: set the model name the action uses:
+```powershell
+$env:OPENAI_MODEL = 'gpt-3.5-turbo'
+```
+
+The action builds a brief prompt from the user's latest message and an optional `product` slot, calls the LLM, and returns the generated reply to the user. For development, you can also stub this action to return a canned reply to avoid API usage.
+
+Security notes:
+- Never commit API keys or credentials. Store secrets in environment variables, a secrets manager, or a CI/CD secret store.
+- Consider adding request rate limits, caching, and prompt sanitization before using an LLM in production.
+
+## Git ignore and secrets
+We added a recommended `.gitignore` to keep virtual environments, model artifacts, caches, and credential files out of source control. Important files you should NOT commit:
+
+- `credentials.yml`, `secrets.yml`, and any other file that contains API keys or passwords
+- model archives and `.rasa/` cache directories
+- local virtual environment folders like `.venv/`, `venv/`, or `env/`
+
+If you accidentally committed secrets, rotate them immediately and remove them from the repo history (tools: `git filter-repo` or `git rebase` + force push).
