@@ -2,29 +2,59 @@ version: "3.1"
 
 stories:
 
-- story: happy path
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
+  - story: happy path
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: mood_great
+      - action: utter_happy
 
-- story: sad path 1
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
+  - story: sad path 1
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: mood_unhappy
+      - action: utter_cheer_up
+      - action: utter_did_that_help
+      - intent: affirm
+      - action: utter_happy
 
-- story: sad path 2
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
+  - story: sad path 2
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: mood_unhappy
+      - action: utter_cheer_up
+      - action: utter_did_that_help
+      - intent: deny
+      - action: utter_goodbye
+
+  - story: check product price
+    steps:
+      - intent: check_price
+      - action: utter_price
+
+  - story: recommend product
+    steps:
+      - intent: recommend_product
+      - action: utter_recommend_product
+
+  - story: ask about quality
+    steps:
+      - intent: ask_quality
+      - action: utter_quality
+
+  - story: check price story
+    steps:
+      - intent: check_price
+      - action: utter_check_price
+
+  - story: recommend product story
+    steps:
+      - intent: recommend_product
+      - action: utter_recommend_product
+
+  - story: ask quality story
+    steps:
+      - intent: ask_quality
+      - action: utter_quality

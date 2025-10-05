@@ -8,27 +8,60 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+  - check_price
+  - recommend_product
+  - ask_quality
+
+entities:
+  - product
+
+slots:
+  product:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: product
+
 
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
+    - text: "Hello! How can I assist you today?"
 
   utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
+    - text: "Here is something to cheer you up:"
+      image: "https://i.imgur.com/nGF1K8f.jpg"
 
   utter_did_that_help:
-  - text: "Did that help you?"
+    - text: "Did that help you?"
 
   utter_happy:
-  - text: "Great, carry on!"
+    - text: "Great, carry on!"
 
   utter_goodbye:
-  - text: "Bye"
+    - text: "Bye"
 
   utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
+    - text: "I am a bot, powered by Rasa."
 
-session_config:
-  session_expiration_time: 60
-  carry_over_slots_to_new_session: true
+  utter_ask_product:
+    - text: "Which product are you interested in?"
+
+  utter_price:
+    - text: "The price of {product} is X dollars. (Replace with real data or action)"
+
+  utter_check_price:
+    - text: "The price of {product}"
+
+  utter_quality:
+    - text: "{product} is known for its excellent quality. (You can enhance this with reviews or real info)"
+    - text: "From user reviews, {product} is reliable and well-liked."
+
+  utter_ask_quality:
+    - text: "What would you like to know about the quality of {product}? For example: durability, materials, or user reviews."
+    - text: "Do you want user reviews, technical specs, or warranty information for {product}?"
+
+  utter_recommend_product:
+    - text: "Based on what you've told me, I recommend the {product}. It has great reviews and good value for money."
+    - text: "You might like the {product}. Do you want to see more details or alternatives?"
+
