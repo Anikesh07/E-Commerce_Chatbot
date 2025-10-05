@@ -69,4 +69,5 @@ responses:
 actions:
   - action_hello_world
   - action_call_llm
+  - action_compare_prices
 

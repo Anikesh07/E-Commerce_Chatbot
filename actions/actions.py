@@ -93,3 +93,99 @@ class ActionCallLLM(Action):
 
 		dispatcher.utter_message(text=text)
 		return []
+
+
+
+# action file to comapre
+
+# --- IGNORE ---
+from typing import Any, Text, Dict, List, Optional
+from rasa_sdk import Action, Tracker
+from rasa_sdk.executor import CollectingDispatcher
+import requests  # For HTTP API calls
+
+class ActionComparePrices(Action):
+    def name(self) -> Text:
+        return "action_compare_prices"
+
+    def fetch_flipkart_price(self, product: Text) -> Optional[Dict[Text, Any]]:
+        fp_api_key = "YOUR_FLIPKART_API_KEY"
+        url = f"https://api.flipkart.net/search?q={product}"
+        headers = {"Authorization": f"Bearer {fp_api_key}"}
+        response = requests.get(url, headers=headers)
+        # Parse response accordingly
+        data = response.json()
+        # Extract price & link from response structure
+        # This is a placeholder: replace with actual parsing logic
+        if "products" in data and len(data["products"]) > 0:
+            p = data["products"][0]
+            return {"site": "Flipkart", "price": p.get("price", None), "url": p.get("productUrl", None)}
+        return None
+
+    def fetch_amazon_price(self, product: Text) -> Optional[Dict[Text, Any]]:
+        am_api_key = "YOUR_AMAZON_API_KEY"
+        url = f"https://api.amazon.com/pricing?q={product}"  # Example URL, replace with actual API
+        headers = {"Authorization": f"Bearer {am_api_key}"}
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        # Extract price & link from response structure
+        if "products" in data and len(data["products"]) > 0:
+            p = data["products"][0]
+            return {"site": "Amazon", "price": p.get("price", None), "url": p.get("url", None)}
+        return None
+
+    def fetch_myntra_price(self, product: Text) -> Optional[Dict[Text, Any]]:
+        # Myntra API or third-party scraping service
+        # Replace with your actual API call
+        return {"site": "Myntra", "price": 2000, "url": "https://www.myntra.com/product-link"}
+
+    def fetch_meesho_price(self, product: Text) -> Optional[Dict[Text, Any]]:
+        # Meesho API or scraping API call
+        return {"site": "Meesho", "price": 1800, "url": "https://www.meesho.com/product-link"}
+
+    async def run(self, dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Any) -> List[Dict[Text, Any]]:
+
+        product = tracker.get_slot("product")
+        if not product:
+            dispatcher.utter_message(text="Please tell me the product name you'd like to check.")
+            return []
+
+        results = []
+        # Call each API and collect price data
+        flipkart_result = self.fetch_flipkart_price(product)
+        if flipkart_result:
+            results.append(flipkart_result)
+        amazon_result = self.fetch_amazon_price(product)
+        if amazon_result:
+            results.append(amazon_result)
+        myntra_result = self.fetch_myntra_price(product)
+        if myntra_result:
+            results.append(myntra_result)
+        meesho_result = self.fetch_meesho_price(product)
+        if meesho_result:
+            results.append(meesho_result)
+
+        if not results:
+            dispatcher.utter_message(text=f"Sorry, I couldn't find any prices for '{product}'.")
+            return []
+
+        # Find the best price
+        valid_prices = [r for r in results if r["price"] is not None]
+        if not valid_prices:
+            dispatcher.utter_message(text=f"Price information not available for '{product}'.")
+            return []
+
+        best = min(valid_prices, key=lambda x: x["price"])
+        message_lines = [f"Price comparison for '{product}':"]
+        for res in valid_prices:
+            price = res["price"]
+            site = res["site"]
+            url = res["url"] or "No link available"
+            message_lines.append(f"- {site}: ₹{price} (Link: {url})")
+
+        message_lines.append(f"\nBest deal is on {best['site']} at ₹{best['price']}.")
+        dispatcher.utter_message(text="\n".join(message_lines))
+
+        return []
