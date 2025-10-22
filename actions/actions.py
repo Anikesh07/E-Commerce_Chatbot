@@ -12,11 +12,16 @@ import os
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Try to import the OpenAI client; keep a graceful fallback for environments
 # where it's not installed.
 openai_available = False
 OpenAIClient = None  # Changed from OpenAI to OpenAIClient to avoid confusion
+
 
 try:
     from openai import OpenAI as OpenAIClient
