@@ -96,8 +96,22 @@ class ActionCallLLM(Action):
                 temperature=0.7,
             )
 
-            text = response.choices[0].message.content.strip()
-            dispatcher.utter_message(text=text)
+            # Safely extract text from the response to avoid calling strip on None
+            raw_content = None
+            if hasattr(response, "choices") and len(response.choices) > 0:
+                choice0 = response.choices[0]
+                # Common shape: choice0.message.content
+                if hasattr(choice0, "message") and hasattr(choice0.message, "content"):
+                    raw_content = choice0.message.content
+                # Fallback: older shape may have choice0.text
+                elif hasattr(choice0, "text"):
+                    raw_content = choice0.text # type: ignore
+                # If choices are dict-like
+                elif isinstance(choice0, dict):
+                    raw_content = choice0.get("message", {}).get("content") or choice0.get("text")
+
+            text = raw_content.strip() if isinstance(raw_content, str) else ""
+            dispatcher.utter_message(text=text or "Sorry, I couldn't generate a reply at the moment.")
             
         except Exception as e:
             dispatcher.utter_message(text=(
