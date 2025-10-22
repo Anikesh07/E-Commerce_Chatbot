@@ -15,11 +15,11 @@ from rasa_sdk.executor import CollectingDispatcher
 
 # Try to import the OpenAI client; keep a graceful fallback for environments
 # where it's not installed.
-OpenAI: Optional[Any] = None
 openai_available = False
+OpenAIClient = None  # Changed from OpenAI to OpenAIClient to avoid confusion
+
 try:
-    from openai import OpenAI as _OpenAI
-    OpenAI = _OpenAI
+    from openai import OpenAI as OpenAIClient
     openai_available = True
 except Exception:
     openai_available = False
@@ -68,7 +68,7 @@ class ActionCallLLM(Action):
             "Provide a short, friendly recommendation or next step the bot should say."
         )
 
-        if not openai_available:
+        if not openai_available or OpenAIClient is None:
             dispatcher.utter_message(text=(
                 "LLM client library is not installed. Install the `openai` package "
                 "or configure another LLM client on the action server."))
@@ -83,7 +83,8 @@ class ActionCallLLM(Action):
 
         try:
             # Updated to use the new OpenAI API client (v1.0.0+)
-            client = OpenAI(api_key=api_key)
+            # Instantiate the client with the API key read earlier
+            client = OpenAIClient(api_key=api_key)
             
             response = client.chat.completions.create(
                 model=os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
